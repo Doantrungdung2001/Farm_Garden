@@ -32,7 +32,7 @@ const AddCameraModal = ({ visible, onCancel, onSubmit, cameraItem, isUpdate }) =
         <Form.Item name="name" label="Tên">
           <Input />
         </Form.Item>
-        <Form.Item name="rtsp_link" label="RTSP Link">
+        <Form.Item name="rtsp_link" label="Youtube Link">
           <Input />
         </Form.Item>
       </Form>

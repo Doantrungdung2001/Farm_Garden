@@ -5,6 +5,7 @@ import AddCameraModal from './AddCameraModal'
 import CAMERA from '../../services/cameraService'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import YouTubeEmbed from '../../components/YouTubeEmbed'
+import Loading from '../Loading'
 
 const CameraList = ({ cameraData, handleCameraSelect, selectedCamera, handleEditCamera, handleDeleteCamera }) => {
   return (
@@ -91,17 +92,7 @@ const OtherInfo = () => {
     })
   }
   console.log('here')
-  // const {
-  //   isSuccessCamera,
-  //   refetchCamera,
-  //   isLoadingCamera,
-  //   cameraData
-  // } = useProjectOtherInfo()
-
-  const cameraData = []
-  const isSuccessCamera = true
-  const refetchCamera = () => {}
-  const isLoadingCamera = false
+  const { isSuccessCamera, refetchCamera, isLoadingCamera, cameraData, isErrorCamera } = useProjectOtherInfo()
 
   console.log('cameraData', cameraData)
 
@@ -195,11 +186,10 @@ const OtherInfo = () => {
       <Spin spinning={loading}>
         <div>
           <h2>Thông tin hình ảnh từ camera</h2>
-          <Button type="primary" onClick={setModalVisible(true)}>
+          <Button type="primary" onClick={() => setModalVisible(true)}>
             Thêm camera
           </Button>
           <AddCameraModal visible={modalVisible} onCancel={() => setModalVisible(false)} onSubmit={handleAddCamera} />{' '}
-          {/* Modal thêm camera */}
           <AddCameraModal
             visible={updateCameraModalVisible}
             onCancel={() => setUpdateCameraModalVisible(false)}
@@ -207,9 +197,7 @@ const OtherInfo = () => {
             cameraItem={selectedUpdateCamera}
             isUpdate={true}
           />
-          {isLoadingCamera ? (
-            <Spin />
-          ) : isSuccessCamera ? (
+          {isSuccessCamera ? (
             <div style={{ marginTop: '10px' }}>
               <Row gutter={[16, 16]}>
                 <Col span={8}>
@@ -227,7 +215,10 @@ const OtherInfo = () => {
               </Row>
             </div>
           ) : (
-            <Alert message="Lỗi khi load thông tin camera" type="error" />
+            <Loading />
+          )}
+          {isErrorCamera && (
+            <Alert message="Lỗi" description="Có lỗi xảy ra, vui lòng thử lại sau" type="error" showIcon />
           )}
         </div>
       </Spin>

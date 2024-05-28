@@ -8,7 +8,7 @@ const TimeItem = () => {
       {' '}
       <h2 style={{ marginTop: '0' }}>Thời gian gieo trồng</h2>
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Space direction="vertical" style={{ width: '100%', backgroundColor: '#e9f0ea', borderRadius: '8px' }}>
+        <Space direction="vertical" style={{ width: '100%', borderRadius: '8px' }}>
           <Form.List name="timeCultivates">
             {(fields, { add, remove }) => (
               <>
@@ -297,6 +297,30 @@ const CultivationItem = () => {
   )
 }
 
+const PlantingActivity = () => {
+  return (
+    <Space direction="vertical" style={{ width: '100%' }}>
+      <h2 style={{ marginTop: '0' }}>Hoạt động gieo trồng</h2>
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Space direction="vertical" style={{ width: '100%', backgroundColor: '#effdee', borderRadius: '8px' }}>
+          <Form.Item name="plantingActivity" style={{ marginRight: '16px', padding: '16px' }}>
+            <Form.Item name={['plantingActivity', 'density']} label={<strong>Mật độ</strong>} style={{ width: '100%' }}>
+              <Input placeholder="Mật độ" style={{ width: '99%', float: 'right' }} />
+            </Form.Item>
+            <Form.Item
+              name={['plantingActivity', 'description']}
+              label={<strong>Mô tả</strong>}
+              style={{ width: '100%' }}
+            >
+              <Input.TextArea placeholder="Mô tả" style={{ width: '100%', float: 'right' }} autoSize={{ minRows: 5 }} />
+            </Form.Item>
+          </Form.Item>
+        </Space>
+      </Space>
+    </Space>
+  )
+}
+
 const FertilizeItem = () => {
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
@@ -371,15 +395,21 @@ const AddPlantFarmingPopup = ({ open, onCreate, onCancel, recommendPlantFarming,
 
   const items = [
     {
-      key: '1',
+      key: '0',
       label: 'Thời gian gieo trồng',
       children: <TimeItem />,
       forceRender: true
     },
     {
-      key: '2',
-      label: 'Làm đất và gieo trồng',
+      key: '1',
+      label: 'Hoạt động làm đất',
       children: <CultivationItem />,
+      forceRender: true
+    },
+    {
+      key: '2',
+      label: 'Hoạt động gieo trồng',
+      children: <PlantingActivity />,
       forceRender: true
     },
     {

@@ -2,6 +2,19 @@ import privateHttp from './http/privateHttp.config'
 import publicHttp from './http/publicHttp.config'
 
 const GARDEN = {
+  getCameraInGarden: async (gardenId) => {
+    return await publicHttp({
+      method: 'GET',
+      url: `garden/${gardenId}/camera`
+    })
+      .then((res) => {
+        return res
+      })
+      .catch((err) => {
+        return err
+      })
+  },
+
   getGardens: async (farmId) => {
     return await publicHttp({
       method: 'GET',
@@ -126,6 +139,20 @@ const GARDEN = {
     return await privateHttp({
       method: 'PATCH',
       url: `garden/${gardenId}`,
+      data
+    })
+      .then((res) => {
+        return res
+      })
+      .catch((err) => {
+        return err
+      })
+  },
+
+  updateCameraToGarden: async ({ gardenId, data }) => {
+    return await privateHttp({
+      method: 'PATCH',
+      url: `/garden/${gardenId}/camera`,
       data
     })
       .then((res) => {
