@@ -58,7 +58,7 @@ const ProcessActivityPage = ({ projectId }) => {
       const res = await PROJECT.addProcess({
         data: {
           ...values
-                },
+        },
         projectId
       })
       if (res.status === 200) {
@@ -90,7 +90,8 @@ const ProcessActivityPage = ({ projectId }) => {
       const { processId, ...updateProcess } = values
       const res = await PROJECT.updateProcess({
         data: {
-          ...updateProcess        },
+          ...updateProcess
+        },
         projectId,
         processId
       })
@@ -166,7 +167,6 @@ const ProcessActivityPage = ({ projectId }) => {
                 handleAddProcess={handleAddProcess}
                 handleUpdateProcess={handleUpdateProcess}
                 handleDeleteProcess={handleDeleteProcess}
-                
                 isGarden={projectInfo.isGarden}
                 loading={loading}
               />
@@ -183,7 +183,6 @@ const ProcessActivityPage = ({ projectId }) => {
                 handleAddProcess={handleAddProcess}
                 handleUpdateProcess={handleUpdateProcess}
                 handleDeleteProcess={handleDeleteProcess}
-                
                 isGarden={projectInfo.isGarden}
                 loading={loading}
               />
@@ -199,7 +198,6 @@ const ProcessActivityPage = ({ projectId }) => {
                 handleAddProcess={handleAddProcess}
                 handleUpdateProcess={handleUpdateProcess}
                 handleDeleteProcess={handleDeleteProcess}
-                
                 isGarden={projectInfo.isGarden}
                 loading={loading}
               />

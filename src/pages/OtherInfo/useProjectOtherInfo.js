@@ -22,7 +22,6 @@ export default function useProjectOtherInfo() {
     data: cameraData,
     isSuccess: isSuccessCamera,
     isLoading: isLoadingCamera,
-    isError: isErrorCamera,
     refetch: refetchCamera
   } = useQuery({
     queryKey: ['farmCamera', farmId],
@@ -36,7 +35,6 @@ export default function useProjectOtherInfo() {
     cameraData: cameraData?.cameraData,
     isSuccessCamera,
     isLoadingCamera,
-    refetchCamera,
-    isErrorCamera
+    refetchCamera
   }
 }

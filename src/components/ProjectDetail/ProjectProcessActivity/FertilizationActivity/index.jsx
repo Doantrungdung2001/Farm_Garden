@@ -216,20 +216,20 @@ const FertilizeTable = ({
       width: 150,
       render: (text, record) => (
         <>
-          <Tooltip title='Chỉnh sửa'>
-          <EditFilled
-                style={{ marginRight: '2rem', cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedPlantFarming({
-                    processId: record._id,
-                    time: record.time,
-                    fertilizationTime: record.fertilizationActivity.fertilizationTime,
-                    type: record.fertilizationActivity.type,
-                    description: record.fertilizationActivity.description
-                  })
-                  setModalUpdateVisible(true)
-                }}
-              />
+          <Tooltip title="Chỉnh sửa">
+            <EditFilled
+              style={{ marginRight: '2rem', cursor: 'pointer' }}
+              onClick={() => {
+                setSelectedPlantFarming({
+                  processId: record._id,
+                  time: record.time,
+                  fertilizationTime: record.fertilizationActivity.fertilizationTime,
+                  type: record.fertilizationActivity.type,
+                  description: record.fertilizationActivity.description
+                })
+                setModalUpdateVisible(true)
+              }}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa"

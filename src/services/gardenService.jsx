@@ -134,7 +134,7 @@ const GARDEN = {
       .catch((err) => {
         return err
       })
-  },
+  }
 }
 
 export default GARDEN

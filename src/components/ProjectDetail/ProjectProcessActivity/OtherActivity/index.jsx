@@ -117,14 +117,7 @@ const Modal2 = ({ modal2Visible, handleModal2Ok, handleModal2Cancel, selectedPla
   )
 }
 
-const OtherTable = ({
-  other,
-  handleAddProcess,
-  handleUpdateProcess,
-  handleDeleteProcess,
-  isGarden,
-  loading
-}) => {
+const OtherTable = ({ other, handleAddProcess, handleUpdateProcess, handleDeleteProcess, isGarden, loading }) => {
   const [modal2Visible, setModal2Visible] = useState(false)
   const [modalUpdateVisible, setModalUpdateVisible] = useState(false)
   const [modalHistoryVisible, setModalHistoryVisible] = useState(false)
@@ -163,18 +156,18 @@ const OtherTable = ({
       width: 150,
       render: (text, record) => (
         <>
-          <Tooltip title='Chỉnh sửa'>
-          <EditFilled
-                style={{ marginRight: '2rem', cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedPlantFarming({
-                    processId: record._id,
-                    time: record.time,
-                    description: record.other.description
-                  })
-                  setModalUpdateVisible(true)
-                }}
-              />
+          <Tooltip title="Chỉnh sửa">
+            <EditFilled
+              style={{ marginRight: '2rem', cursor: 'pointer' }}
+              onClick={() => {
+                setSelectedPlantFarming({
+                  processId: record._id,
+                  time: record.time,
+                  description: record.other.description
+                })
+                setModalUpdateVisible(true)
+              }}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa"

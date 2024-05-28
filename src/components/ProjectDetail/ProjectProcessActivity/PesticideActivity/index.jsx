@@ -2,13 +2,7 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import { Button, Table, Modal, Form, Input, DatePicker, Select, Popconfirm, Tooltip, Spin, Divider } from 'antd'
 import { ParagraphWithEllipsis, formatDateTime } from '../../../../utils/helpers'
-import {
-  DeleteFilled,
-  EditFilled,
-  HistoryOutlined,
-  MinusCircleOutlined,
-  PlusOutlined
-} from '@ant-design/icons'
+import { DeleteFilled, EditFilled, HistoryOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 const { Option } = Select
 
 const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
@@ -296,21 +290,21 @@ const PesticideTable = ({
       width: '150px',
       render: (text, record) => (
         <>
-          <Tooltip title='Chỉnh sửa'>
-          <EditFilled
-                style={{ marginRight: '2rem', cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedPlantFarming({
-                    processId: record._id,
-                    time: record.time,
-                    name: record.pestAndDiseaseControlActivity.name,
-                    type: record.pestAndDiseaseControlActivity.type,
-                    symptoms: record.pestAndDiseaseControlActivity.symptoms,
-                    solution: record.pestAndDiseaseControlActivity.solution
-                  })
-                  setModalUpdateVisible(true)
-                }}
-              />
+          <Tooltip title="Chỉnh sửa">
+            <EditFilled
+              style={{ marginRight: '2rem', cursor: 'pointer' }}
+              onClick={() => {
+                setSelectedPlantFarming({
+                  processId: record._id,
+                  time: record.time,
+                  name: record.pestAndDiseaseControlActivity.name,
+                  type: record.pestAndDiseaseControlActivity.type,
+                  symptoms: record.pestAndDiseaseControlActivity.symptoms,
+                  solution: record.pestAndDiseaseControlActivity.solution
+                })
+                setModalUpdateVisible(true)
+              }}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa"

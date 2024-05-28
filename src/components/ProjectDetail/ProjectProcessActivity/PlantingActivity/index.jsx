@@ -197,20 +197,20 @@ const PlantingTable = ({
       width: 150,
       render: (text, record) => (
         <>
-          <Tooltip title='Chỉnh sửa'>
-          <EditFilled
-                style={{ marginRight: '2rem', cursor: 'pointer' }}
-                onClick={() => {
-                  console.log(record)
-                  setSelectedPlantFarming({
-                    processId: record._id,
-                    time: record.time,
-                    density: record.plantingActivity.density,
-                    description: record.plantingActivity.description
-                  })
-                  setModalUpdateVisible(true)
-                }}
-              />
+          <Tooltip title="Chỉnh sửa">
+            <EditFilled
+              style={{ marginRight: '2rem', cursor: 'pointer' }}
+              onClick={() => {
+                console.log(record)
+                setSelectedPlantFarming({
+                  processId: record._id,
+                  time: record.time,
+                  density: record.plantingActivity.density,
+                  description: record.plantingActivity.description
+                })
+                setModalUpdateVisible(true)
+              }}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa"

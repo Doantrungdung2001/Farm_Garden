@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Spin, Alert, Button, notification, List, Card, Row, Col, Popconfirm } from 'antd'
+import { Spin, Alert, Button, notification, List, Card, Row, Col, Popconfirm, Tooltip } from 'antd'
 import useProjectOtherInfo from './useProjectOtherInfo'
 import AddCameraModal from './AddCameraModal'
 import CAMERA from '../../services/cameraService'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
-
+import YouTubeEmbed from '../../components/YouTubeEmbed'
 
 const CameraList = ({ cameraData, handleCameraSelect, selectedCamera, handleEditCamera, handleDeleteCamera }) => {
   return (
@@ -18,26 +18,33 @@ const CameraList = ({ cameraData, handleCameraSelect, selectedCamera, handleEdit
             cursor: 'pointer',
             background: camera === selectedCamera ? '#f0f0f0' : 'transparent',
             padding: '10px',
-            borderRadius: '5px'
+            borderRadius: '5px',
+            paddingLeft: '20px',
+            border: '1px solid #f0f0f0',
+            marginBottom: '10px'
           }}
           actions={[
-            <EditOutlined
-              key="edit"
-              onClick={(e) => handleEditCamera(e, camera)}
-              style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
-            />,
-            <Popconfirm
-              title="Bạn có chắc chắn muốn xóa camera này không?"
-              onConfirm={() => handleDeleteCamera(camera)}
-              onCancel={() => console.log('Cancel')}
-              okText="Có"
-              cancelText="Không"
-            >
-              <DeleteOutlined key="delete" style={{ fontSize: '20px', color: 'red', cursor: 'pointer' }} />
-            </Popconfirm>
+            <Tooltip title="Chỉnh sửa camera" key="edit">
+              <EditOutlined
+                key="edit"
+                onClick={(e) => handleEditCamera(e, camera)}
+                style={{ fontSize: '20px', cursor: 'pointer' }}
+              />
+            </Tooltip>,
+            <Tooltip title="Xóa camera" key="delete">
+              <Popconfirm
+                title="Bạn có chắc chắn muốn xóa camera này không?"
+                onConfirm={() => handleDeleteCamera(camera)}
+                onCancel={() => console.log('Cancel')}
+                okText="Có"
+                cancelText="Không"
+              >
+                <DeleteOutlined key="delete" style={{ fontSize: '20px', cursor: 'pointer' }} />
+              </Popconfirm>
+            </Tooltip>
           ]}
         >
-          <List.Item.Meta title={<p>Tên: {camera.name}</p>} description={<p>RTSP Link: {camera.rtsp_link}</p>} />
+          <List.Item.Meta title={<p>Tên: {camera.name}</p>} description={<p>Youtube Link: {camera.rtsp_link}</p>} />
         </List.Item>
       )}
     />
@@ -46,13 +53,25 @@ const CameraList = ({ cameraData, handleCameraSelect, selectedCamera, handleEdit
 
 const VideoPlayer = ({ selectedCamera }) => {
   return (
-    <Card title={selectedCamera ? selectedCamera.name : 'Chọn camera'}>
-      {selectedCamera && (
-        <video controls autoPlay>
-          <source src={selectedCamera.rtsp_link} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      )}
+    <Card title={selectedCamera ? selectedCamera.name : 'Chọn camera'} style={{ height: '500px' }}>
+      <div style={{ height: '400px' }}>
+        {selectedCamera && <YouTubeEmbed videoUrl={selectedCamera.rtsp_link} style={{ height: '100%' }} />}
+        {!selectedCamera && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+              fontWeight: 'bold',
+              fontSize: '20px',
+              color: 'gray'
+            }}
+          >
+            <p>Hãy chọn camera để xem livestream tương ứng</p>
+          </div>
+        )}
+      </div>
     </Card>
   )
 }
@@ -71,12 +90,20 @@ const OtherInfo = () => {
       duration: 3.5
     })
   }
-  const {
-    isSuccessCamera,
-    refetchCamera,
-    isLoadingCamera,
-    cameraData
-  } = useProjectOtherInfo()
+  console.log('here')
+  // const {
+  //   isSuccessCamera,
+  //   refetchCamera,
+  //   isLoadingCamera,
+  //   cameraData
+  // } = useProjectOtherInfo()
+
+  const cameraData = []
+  const isSuccessCamera = true
+  const refetchCamera = () => {}
+  const isLoadingCamera = false
+
+  console.log('cameraData', cameraData)
 
   const handleCameraSelect = (camera) => {
     setSelectedCamera(camera)
@@ -99,7 +126,7 @@ const OtherInfo = () => {
       const res = await CAMERA.createCamera({
         data: {
           name: values.name,
-          rtsp_link: values.rtsp_link,
+          rtsp_link: values.rtsp_link
         }
       })
       setLoading(false)
@@ -165,15 +192,10 @@ const OtherInfo = () => {
   return (
     <div>
       {contextHolder}
-      <Spin
-        spinning={loading}
-      >
+      <Spin spinning={loading}>
         <div>
           <h2>Thông tin hình ảnh từ camera</h2>
-          <Button
-            type="primary"
-            onClick={setModalVisible(true)}
-          >
+          <Button type="primary" onClick={setModalVisible(true)}>
             Thêm camera
           </Button>
           <AddCameraModal visible={modalVisible} onCancel={() => setModalVisible(false)} onSubmit={handleAddCamera} />{' '}
@@ -199,7 +221,7 @@ const OtherInfo = () => {
                     handleDeleteCamera={handleDeleteCamera}
                   />
                 </Col>
-                <Col span={16}>
+                <Col span={16} style={{ height: '500px' }}>
                   <VideoPlayer selectedCamera={selectedCamera} />
                 </Col>
               </Row>
