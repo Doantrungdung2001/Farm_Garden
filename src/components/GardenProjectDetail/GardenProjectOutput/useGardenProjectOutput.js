@@ -5,11 +5,17 @@ import { formatDateTime } from '../../../utils/helpers'
 
 export default function useGardenProjectOutput(gardenId) {
   const parseData = useCallback((data) => {
-    const output = {
+    let output = {
       coming: [],
       done: [],
       cancel: []
     }
+    if (!data || data.length === 0) {
+      return { output }
+    }
+    data.sort((a, b) => {
+      return new Date(b.time) - new Date(a.time)
+    })
     data.forEach((item) => {
       output[item.status].push({
         id: item?._id,
@@ -26,6 +32,7 @@ export default function useGardenProjectOutput(gardenId) {
         clientNote: item?.clientNote
       })
     })
+
     return { output }
   }, [])
 
