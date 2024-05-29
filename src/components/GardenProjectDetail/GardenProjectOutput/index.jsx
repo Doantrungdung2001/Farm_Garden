@@ -31,17 +31,17 @@ const UpdateStatusModal = ({ visible, onCancel, onComingUpdate, onCancelUpdate, 
           <p style={{ marginBottom: '20px', fontSize: '16px' }}>Vui lòng chọn một lựa chọn để tiếp tục:</p>
           {selectedDelivery.status !== 'coming' && (
             <Button onClick={onComingUpdate} style={{ marginBottom: '10px', width: '100%' }}>
-              Coming
+              Sắp giao
             </Button>
           )}
           {selectedDelivery.status !== 'done' && (
             <Button onClick={onDoneUpdate} style={{ marginBottom: '10px', width: '100%' }}>
-              Done
+              Hoàn thành
             </Button>
           )}
           {selectedDelivery.status !== 'cancel' && (
             <Button onClick={onCancelUpdate} style={{ marginBottom: '10px', width: '100%' }}>
-              Cancel
+              Hủy
             </Button>
           )}
         </div>

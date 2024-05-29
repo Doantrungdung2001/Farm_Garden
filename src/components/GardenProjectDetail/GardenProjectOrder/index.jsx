@@ -80,7 +80,7 @@ const CameraSelectionModal = ({
           </Checkbox>
         </div>
       ))}
-      {!isSuccessCamera && <Spin spinning={true} tip="Đang tải dữ liệu" size="small" />}
+      {!isSuccessCamera && <Spin spinning={true} tip="Đang tải dữ liệu" size="large" />}
     </Modal>
   )
 }
@@ -153,7 +153,7 @@ const GardenProjectOrder = () => {
     <Spin spinning={loading} size="large">
       <div>
         {contextHolder}
-        {isSuccess ? (
+        {isSuccess && isSuccessCamera && isSuccessCameraInGarden ? (
           <div>
             <div>
               <Alert
@@ -225,7 +225,7 @@ const GardenProjectOrder = () => {
                   </ul>
                 </div>
               ) : (
-                <Spin spinning={true} tip="Đang tải dữ liệu" size="small" />
+                <Spin spinning={true} tip="Đang tải dữ liệu" size="large" />
               )}
               <CameraSelectionModal
                 visible={openUpdateCamera} // Set visibility of CameraSelectionModal

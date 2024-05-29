@@ -111,11 +111,19 @@ const ProcessActivityPage = ({ projectId }) => {
 
   const handleDeleteProcess = async (processId) => {
     console.log('Delete process: ', processId)
-    const res = await PROJECT.deleteProcess({ projectId, processId })
-    if (res.status === 200) {
-      refetch()
-      openNotificationWithIcon('success', 'Thông báo', 'Xóa thành công')
-    } else {
+    setLoading(true)
+    try {
+      const res = await PROJECT.deleteProcess({ projectId, processId })
+      setLoading(false)
+      if (res.status === 200) {
+        refetch()
+        openNotificationWithIcon('success', 'Thông báo', 'Xóa thành công')
+      } else {
+        openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
+      }
+    } catch (error) {
+      setLoading(false)
+      console.log('error: ', error)
       openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
     }
   }

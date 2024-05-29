@@ -4,7 +4,7 @@ import { Button, Table, Modal, Form, Input, DatePicker, Popconfirm, Tooltip, Spi
 import { ParagraphWithEllipsis, formatDateTime } from '../../../../utils/helpers'
 import { DeleteFilled, EditFilled, HistoryOutlined } from '@ant-design/icons'
 
-const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
+const HistoryModal = ({ history, item, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
   return (
     <Modal
       title="Lịch sử chỉnh sửa"
@@ -16,8 +16,7 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
       {history &&
         history.map((item, index) => (
           <div key={index} style={{ marginBottom: '8px' }}>
-            <Divider>Nhập lúc: {formatDateTime(item.createdAtTime)}</Divider>
-            <Divider>Chỉnh sửa lúc: {formatDateTime(item.modifiedAt)}</Divider>
+            <Divider>{formatDateTime(item.createdAtTime)}</Divider>
             <p>
               <span>
                 <strong>Thời gian: </strong>
@@ -39,6 +38,30 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
             </p>
           </div>
         ))}
+      {item && (
+        <div style={{ marginBottom: '8px' }}>
+          <Divider>{formatDateTime(item.createdAtTime)}</Divider>
+          <p>
+            <span>
+              <strong>Thời gian: </strong>
+            </span>
+            {formatDateTime(item.time)}
+          </p>
+
+          <p>
+            <span>
+              <strong>Tên: </strong>
+            </span>
+            {item.plantingActivity?.density}
+          </p>
+          <p>
+            <span>
+              <strong>Mô tả: </strong>
+            </span>
+            <ParagraphWithEllipsis text={item.plantingActivity?.description} rows={3} />
+          </p>
+        </div>
+      )}
     </Modal>
   )
 }
@@ -252,7 +275,7 @@ const PlantingTable = ({
           Thêm
         </Button>
       </div>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} size="large">
         <Table dataSource={planting} columns={columns} pagination={false} />
       </Spin>
 

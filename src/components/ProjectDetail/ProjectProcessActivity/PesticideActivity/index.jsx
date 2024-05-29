@@ -5,7 +5,7 @@ import { ParagraphWithEllipsis, formatDateTime } from '../../../../utils/helpers
 import { DeleteFilled, EditFilled, HistoryOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 const { Option } = Select
 
-const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
+const HistoryModal = ({ history, item, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
   return (
     <Modal
       title="Lịch sử chỉnh sửa"
@@ -17,8 +17,7 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
       {history &&
         history.map((item, index) => (
           <div key={index} style={{ marginBottom: '8px' }}>
-            <Divider>Nhập lúc: {formatDateTime(item.createdAtTime)}</Divider>
-            <Divider>Chỉnh sửa lúc: {formatDateTime(item.modifiedAt)}</Divider>
+            <Divider>{formatDateTime(item.createdAtTime)}</Divider>
             <p>
               <span>
                 <strong>Thời gian: </strong>
@@ -59,6 +58,49 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
             </p>
           </div>
         ))}
+      {item && (
+        <div style={{ marginBottom: '8px' }}>
+          <Divider>{formatDateTime(item.createdAtTime)}</Divider>
+          <p>
+            <span>
+              <strong>Thời gian: </strong>
+            </span>
+            {formatDateTime(item.time)}
+          </p>
+
+          <p>
+            <span>
+              <strong>Tên: </strong>
+            </span>
+            {item.pestAndDiseaseControlActivity?.name}
+          </p>
+          <p>
+            <span>
+              <strong>Tác nhân: </strong>
+            </span>
+            {item.pestAndDiseaseControlActivity?.type === 'pest' ? 'Sâu bệnh' : 'Dịch hại'}
+          </p>
+          <p>
+            <span>
+              <strong>Triệu chứng: </strong>
+            </span>
+            {/* {item.pestAndDiseaseControlActivity.symptoms} */}
+            <ParagraphWithEllipsis text={item.pestAndDiseaseControlActivity?.symptoms} rows={5} />
+          </p>
+          <p>
+            <span>
+              <strong>Giải pháp: </strong>
+            </span>
+            {item.pestAndDiseaseControlActivity?.solution.map((sol, index) => (
+              <ul>
+                <li key={index}>
+                  <ParagraphWithEllipsis text={sol} rows={5} />
+                </li>
+              </ul>
+            ))}
+          </p>
+        </div>
+      )}
     </Modal>
   )
 }
@@ -78,6 +120,7 @@ const Modal2 = ({ modal2Visible, handleModal2Ok, handleModal2Cancel, selectedPla
       title={isUpdate ? 'Cập nhật hành động' : 'Thêm hành động'}
       okText={isUpdate ? 'Cập nhật' : 'Thêm'}
       cancelText="Hủy"
+      width={1000}
       onCancel={() => {
         form.resetFields()
         handleModal2Cancel()
@@ -166,10 +209,16 @@ const Modal2 = ({ modal2Visible, handleModal2Ok, handleModal2Cancel, selectedPla
                       ]}
                       noStyle
                     >
-                      <Input.TextArea placeholder="Giải pháp" style={{ width: '100%' }} autoSize={{ minRows: 5 }} />
+                      <Input.TextArea placeholder="Giải pháp" style={{ width: '95%' }} autoSize={{ minRows: 5 }} />
                     </Form.Item>
                     {fields.length > 1 ? (
-                      <MinusCircleOutlined className="dynamic-delete-button" onClick={() => remove(field.name)} />
+                      <Tooltip title="Xóa giải pháp này">
+                        <MinusCircleOutlined
+                          className="dynamic-delete-button"
+                          onClick={() => remove(field.name)}
+                          style={{ marginBottom: '50px', marginLeft: '10px' }}
+                        />
+                      </Tooltip>
                     ) : null}
                   </Form.Item>
                 ))}
@@ -178,7 +227,7 @@ const Modal2 = ({ modal2Visible, handleModal2Ok, handleModal2Cancel, selectedPla
                     type="dashed"
                     onClick={() => add()}
                     style={{
-                      width: '60%'
+                      width: '95%'
                     }}
                     icon={<PlusOutlined />}
                   >
@@ -346,7 +395,7 @@ const PesticideTable = ({
           Thêm
         </Button>
       </div>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} size="large">
         <Table dataSource={pesticide} columns={columns} pagination={false} />
       </Spin>
 

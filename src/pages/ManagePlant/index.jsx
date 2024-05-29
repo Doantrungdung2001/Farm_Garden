@@ -14,6 +14,7 @@ import SEED from '../../services/seedService'
 import PLANT_FARMING from '../../services/plantFarmingService'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import UpdatePlantInfo from '../../components/ManagePlant/UpdatePlantInfo'
+import Search from 'antd/es/input/Search'
 const { Paragraph } = Typography
 
 const ManagePlant = () => {
@@ -179,7 +180,7 @@ const ManagePlant = () => {
           <h1>Danh sách các cây</h1>
           <Row>
             <Col span={8}>
-              <Input
+              <Search
                 placeholder="Tìm kiếm cây"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

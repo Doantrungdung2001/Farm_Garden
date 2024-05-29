@@ -183,7 +183,7 @@ const OtherInfo = () => {
   return (
     <div>
       {contextHolder}
-      <Spin spinning={loading}>
+      <Spin spinning={loading} size="large">
         <div>
           <h2>Thông tin hình ảnh từ camera</h2>
           <Button type="primary" onClick={() => setModalVisible(true)}>
