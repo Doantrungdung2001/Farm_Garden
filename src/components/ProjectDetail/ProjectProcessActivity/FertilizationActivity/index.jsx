@@ -5,7 +5,7 @@ import { ParagraphWithEllipsis, formatDateTime } from '../../../../utils/helpers
 import { DeleteFilled, EditFilled, HistoryOutlined } from '@ant-design/icons'
 const { Option } = Select
 
-const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
+const HistoryModal = ({ history, item, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
   return (
     <Modal
       title="Lịch sử chỉnh sửa"
@@ -17,8 +17,7 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
       {history &&
         history.map((item, index) => (
           <div key={index} style={{ marginBottom: '8px' }}>
-            <Divider>Nhập lúc: {formatDateTime(item.createdAtTime)}</Divider>
-            <Divider>Chỉnh sửa lúc: {formatDateTime(item.modifiedAt)}</Divider>
+            <Divider>{formatDateTime(item.createdAtTime)}</Divider>
             <p>
               <span>
                 <strong>Thời gian: </strong>
@@ -36,7 +35,7 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
               <span>
                 <strong>Kiểu bón: </strong>
               </span>
-              {item.fertilizationActivity.type}
+              {item.fertilizationActivity.type === 'baseFertilizer' ? 'Bón lót' : 'Bón thúc'}
             </p>
             <p>
               <span>
@@ -47,6 +46,37 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
             </p>
           </div>
         ))}
+      {item && (
+        <div style={{ marginBottom: '8px' }}>
+          <Divider>{formatDateTime(item?.createdAtTime)}</Divider>
+          <p>
+            <span>
+              <strong>Thời gian: </strong>
+            </span>
+            {formatDateTime(item?.time)}
+          </p>
+
+          <p>
+            <span>
+              <strong>Thời điểm bón phân: </strong>
+            </span>
+            {item?.fertilizationActivity?.fertilizationTime}
+          </p>
+          <p>
+            <span>
+              <strong>Kiểu bón: </strong>
+            </span>
+            {item?.fertilizationActivity?.type === 'baseFertilizer' ? 'Bón lót' : 'Bón thúc'}
+          </p>
+          <p>
+            <span>
+              <strong>Mô tả: </strong>
+            </span>
+            {/* {item.fertilizationActivity.description} */}
+            <ParagraphWithEllipsis text={item?.fertilizationActivity?.description} rows={3} />
+          </p>
+        </div>
+      )}
     </Modal>
   )
 }
@@ -216,20 +246,20 @@ const FertilizeTable = ({
       width: 150,
       render: (text, record) => (
         <>
-          <Tooltip title='Chỉnh sửa'>
-          <EditFilled
-                style={{ marginRight: '2rem', cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedPlantFarming({
-                    processId: record._id,
-                    time: record.time,
-                    fertilizationTime: record.fertilizationActivity.fertilizationTime,
-                    type: record.fertilizationActivity.type,
-                    description: record.fertilizationActivity.description
-                  })
-                  setModalUpdateVisible(true)
-                }}
-              />
+          <Tooltip title="Chỉnh sửa">
+            <EditFilled
+              style={{ marginRight: '2rem', cursor: 'pointer' }}
+              onClick={() => {
+                setSelectedPlantFarming({
+                  processId: record._id,
+                  time: record.time,
+                  fertilizationTime: record.fertilizationActivity.fertilizationTime,
+                  type: record.fertilizationActivity.type,
+                  description: record.fertilizationActivity.description
+                })
+                setModalUpdateVisible(true)
+              }}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa"
@@ -271,7 +301,7 @@ const FertilizeTable = ({
           Thêm
         </Button>
       </div>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} size="large">
         <Table dataSource={fertilize} columns={columns} pagination={false} />
       </Spin>
       {/* Modal 1 */}

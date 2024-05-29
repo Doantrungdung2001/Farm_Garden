@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Loading from '../Loading'
 import { formatDateToInput } from '../../utils/helpers'
 import useManageGarden from './useManageGarden'
+import Search from 'antd/es/input/Search'
 
 const ManageGarden = () => {
   const { gardens, isSuccess } = useManageGarden()
@@ -42,7 +43,7 @@ const ManageGarden = () => {
             <Flex style={{ marginBottom: '2rem' }} align="flex-end">
               <Flex vertical style={{ marginRight: '1rem' }}>
                 <label style={{ marginBottom: '0.5rem' }}>Tên / Sđt / Email của khách hàng: </label>
-                <Input
+                <Search
                   placeholder="Tìm kiếm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

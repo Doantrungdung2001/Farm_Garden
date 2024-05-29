@@ -4,7 +4,7 @@ import { Button, Table, Modal, Form, Input, DatePicker, Popconfirm, Tooltip, Spi
 import { ParagraphWithEllipsis, formatDateTime } from '../../../../utils/helpers'
 import { DeleteFilled, EditFilled, HistoryOutlined } from '@ant-design/icons'
 
-const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
+const HistoryModal = ({ history, item, historyModalVisible, handleHistoryModalCancel, isGarden }) => {
   return (
     <Modal
       title="Lịch sử chỉnh sửa"
@@ -16,8 +16,7 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
       {history &&
         history.map((item, index) => (
           <div key={index} style={{ marginBottom: '8px' }}>
-            <Divider>Nhập lúc: {formatDateTime(item.createdAtTime)}</Divider>
-            <Divider>Chỉnh sửa lúc: {formatDateTime(item.modifiedAt)}</Divider>
+            <Divider>{formatDateTime(item.createdAtTime)}</Divider>
             <p>
               <span>
                 <strong>Thời gian: </strong>
@@ -34,6 +33,25 @@ const HistoryModal = ({ history, historyModalVisible, handleHistoryModalCancel, 
             </p>
           </div>
         ))}
+      {item && (
+        <div style={{ marginBottom: '8px' }}>
+          <Divider>{formatDateTime(item.createdAtTime)}</Divider>
+          <p>
+            <span>
+              <strong>Thời gian: </strong>
+            </span>
+            {formatDateTime(item.time)}
+          </p>
+
+          <p>
+            <span>
+              <strong>Mô tả: </strong>
+            </span>
+            {/* {item.other.description} */}
+            <ParagraphWithEllipsis text={item.other?.description} rows={3} />
+          </p>
+        </div>
+      )}
     </Modal>
   )
 }
@@ -117,14 +135,7 @@ const Modal2 = ({ modal2Visible, handleModal2Ok, handleModal2Cancel, selectedPla
   )
 }
 
-const OtherTable = ({
-  other,
-  handleAddProcess,
-  handleUpdateProcess,
-  handleDeleteProcess,
-  isGarden,
-  loading
-}) => {
+const OtherTable = ({ other, handleAddProcess, handleUpdateProcess, handleDeleteProcess, isGarden, loading }) => {
   const [modal2Visible, setModal2Visible] = useState(false)
   const [modalUpdateVisible, setModalUpdateVisible] = useState(false)
   const [modalHistoryVisible, setModalHistoryVisible] = useState(false)
@@ -163,18 +174,18 @@ const OtherTable = ({
       width: 150,
       render: (text, record) => (
         <>
-          <Tooltip title='Chỉnh sửa'>
-          <EditFilled
-                style={{ marginRight: '2rem', cursor: 'pointer' }}
-                onClick={() => {
-                  setSelectedPlantFarming({
-                    processId: record._id,
-                    time: record.time,
-                    description: record.other.description
-                  })
-                  setModalUpdateVisible(true)
-                }}
-              />
+          <Tooltip title="Chỉnh sửa">
+            <EditFilled
+              style={{ marginRight: '2rem', cursor: 'pointer' }}
+              onClick={() => {
+                setSelectedPlantFarming({
+                  processId: record._id,
+                  time: record.time,
+                  description: record.other.description
+                })
+                setModalUpdateVisible(true)
+              }}
+            />
           </Tooltip>
           <Popconfirm
             title="Xóa"
@@ -216,7 +227,7 @@ const OtherTable = ({
           Thêm
         </Button>
       </div>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} size="large">
         <Table dataSource={other} columns={columns} pagination={false} />
       </Spin>
       {/* Modal 2 */}

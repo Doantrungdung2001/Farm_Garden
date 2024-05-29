@@ -5,6 +5,14 @@ import { formatDateTime } from '../../../utils/helpers'
 
 export default function useGardenProjectClientRequest(gardenId) {
   const parseData = useCallback((data) => {
+    if (!data || data.length === 0) {
+      return { gardenClientRequest: [] }
+    }
+
+    data.sort((a, b) => {
+      return new Date(b.time) - new Date(a.time)
+    })
+
     const gardenClientRequest = data.map((item) => {
       if (item.type === 'deliveryRequest') {
         return {
