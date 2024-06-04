@@ -64,15 +64,20 @@ const ManageRequest = () => {
 
   const handleOk = () => {
     async function fetchData() {
-      await GARDEN_SERVICE_REQUEST.updateGardenServiceRequestStatus({
+      const res = await GARDEN_SERVICE_REQUEST.updateGardenServiceRequestStatus({
         status: 'accept',
         serviceRequestId: reqDetail._id
       })
       refetch()
+      if(res.status === 200) {
+        openNotificationWithIcon('success', 'Thông báo', 'Chấp nhận đơn hàng thành công')
+      } else {
+        openNotificationWithIcon('error', 'Thông báo', 'Chấp nhận đơn hàng thaast baji')
+      }
     }
     fetchData()
     setIsModalOpen(false)
-    openNotificationWithIcon('success', 'Thông báo', 'Chấp nhận đơn hàng thành công')
+    
   }
 
   const handleCancel = () => {
@@ -81,11 +86,16 @@ const ManageRequest = () => {
 
   const handleReject = () => {
     async function fetchData() {
-      await GARDEN_SERVICE_REQUEST.updateGardenServiceRequestStatus({
+      const res = await GARDEN_SERVICE_REQUEST.updateGardenServiceRequestStatus({
         status: 'reject',
         serviceRequestId: reqDetail._id
       })
 
+      if(res.status === 200) {
+        openNotificationWithIcon('success', 'Thông báo', 'Tu choi đơn hàng thành công')
+      } else {
+        openNotificationWithIcon('error', 'Thông báo', 'Tu choi đơn hàng thaast baji')
+      }
       refetch()
     }
     fetchData()
