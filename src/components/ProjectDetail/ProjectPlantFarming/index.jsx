@@ -15,9 +15,9 @@ const ProjectFarming = ({ projectId }) => {
   const [opneConfirmPlantFarming, setOpenConfirmPlantFarming] = useState(false)
   const [isDefaultPlantFarming, setIsDefaultPlantFarming] = useState(false)
   const [isFarmPlantFarming, setIsFarmPlantFarming] = useState(false)
-  console.log("projectId:", projectId)
+  console.log('projectId:', projectId)
   const { projectInfo, isSuccess } = useProjectInput({ projectId })
-  console.log("isSuccess: ", isSuccess)
+  console.log('isSuccess: ', isSuccess)
   const {
     plantFarming,
     isSuccessPlantFarming,
@@ -33,7 +33,7 @@ const ProjectFarming = ({ projectId }) => {
     isDefaultPlantFarming,
     isFarmPlantFarming
   })
-  console.log("isSuccessPlantFarming: ", isSuccessPlantFarming)
+  console.log('isSuccessPlantFarming: ', isSuccessPlantFarming)
 
   const handleUpdatePlantFarming = async (values) => {
     try {
@@ -250,9 +250,6 @@ const ProjectFarming = ({ projectId }) => {
         >
           Chỉnh sửa
         </Button>
-        {plantFarming.isEdited ? (
-          <EditPlantFarmingHistory historyPlantFarmingEdit={plantFarming.historyPlantFarmingEdit} />
-        ) : null}
         <AddPlantFarmingPopup
           open={openUpdatePlantFarming}
           onCancel={() => setOpenUpdatePlantFarming(false)}

@@ -55,7 +55,6 @@ const PROJECT = {
       })
   },
 
-
   addPlantFarmingToProject: async ({ data, projectId }) => {
     return await privateHttp({
       method: 'POST',

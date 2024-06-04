@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router'
 import GARDEN from '../../../services/gardenService'
-import { notification, Button, Table, Form, Input, Modal, Space, Popconfirm } from 'antd'
+import { notification, Button, Table, Form, Input, Modal, Space, Popconfirm, Row, Col } from 'antd'
 
 import Loading from '../../../pages/Loading'
 import { formatDate } from '../../../utils/helpers'
@@ -13,7 +13,7 @@ const layout = {
     span: 6
   },
   wrapperCol: {
-    span: 18
+    span: 24
   }
 }
 
@@ -31,17 +31,17 @@ const UpdateStatusModal = ({ visible, onCancel, onComingUpdate, onCancelUpdate, 
           <p style={{ marginBottom: '20px', fontSize: '16px' }}>Vui lòng chọn một lựa chọn để tiếp tục:</p>
           {selectedDelivery.status !== 'coming' && (
             <Button onClick={onComingUpdate} style={{ marginBottom: '10px', width: '100%' }}>
-              Coming
+              Sắp giao
             </Button>
           )}
           {selectedDelivery.status !== 'done' && (
             <Button onClick={onDoneUpdate} style={{ marginBottom: '10px', width: '100%' }}>
-              Done
+              Hoàn thành
             </Button>
           )}
           {selectedDelivery.status !== 'cancel' && (
             <Button onClick={onCancelUpdate} style={{ marginBottom: '10px', width: '100%' }}>
-              Cancel
+              Hủy
             </Button>
           )}
         </div>
@@ -124,25 +124,46 @@ const CollectionCreateForm = ({ open, onCreate, onCancel, listPlant, isUpdate, s
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
-                      rowGap: 16
+                      rowGap: 16,
+                      marginTop: '15px'
                     }}
                   >
                     {subFields.map((subField, i) => (
-                      <Space key={subField.key}>
-                        <span>{listPlant[i].name ? listPlant[i].name : ''}</span>
-                        <Form.Item noStyle name={[subField.name, 'amount']} label={listPlant[i]?.name}>
-                          <Input type="number" addonAfter="kg" />
-                        </Form.Item>
-                      </Space>
+                      <Row key={subField.key} gutter={16} align="middle">
+                        <Col span={8}>
+                          <span>{listPlant[i].name ? listPlant[i].name : ''}</span>
+                        </Col>
+                        <Col span={16}>
+                          <Form.Item noStyle name={[subField.name, 'amount']} label={listPlant[i]?.name}>
+                            <Input type="number" addonAfter="kg" />
+                          </Form.Item>
+                        </Col>
+                      </Row>
                     ))}
                   </div>
                 )}
               </Form.List>
             </Form.Item>
-            <Form.Item name="note" label="Ghi chú">
-              <Input placeholder="Điền ghi chú" style={{ width: '100%' }} />
-            </Form.Item>
-            <div></div>
+
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                rowGap: 16,
+                marginTop: '15px'
+              }}
+            >
+              <Row key={'note'} gutter={16} align="middle">
+                <Col span={8}>
+                  <span>Ghi chú</span>
+                </Col>
+                <Col span={16}>
+                  <Form.Item name="note" noStyle label={'Ghi chú'}>
+                    <Input.TextArea placeholder="Điền ghi chú" autoSize={{ minRows: 5 }} />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </div>
           </Form>
         </Modal>
       ) : (

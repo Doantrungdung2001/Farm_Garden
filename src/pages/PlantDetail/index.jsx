@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Collapse, Button, Divider, Popconfirm, Tooltip, notification, Select, List, Table, Typography } from 'antd'
+import { Collapse, Button, Divider, Popconfirm, Tooltip, notification, List, Table, Typography, Spin } from 'antd'
 import { useParams } from 'react-router-dom'
 import Loading from '../Loading'
 import usePlantDetail from './usePlantDetail'
@@ -10,7 +10,6 @@ import PLANT_FARMING from '../../services/plantFarmingService'
 import SEED from '../../services/seedService'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import UpdateSeedInfo from '../../components/ManagePlant/UpdateSeedInfo'
-const { Option } = Select
 
 const { Panel } = Collapse
 const { Paragraph } = Typography
@@ -26,6 +25,7 @@ const PlantDetail = () => {
   const [openPlantFarming, setOpenPlantFarming] = useState(false)
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false)
   const [isDefaultPlantFarming, setIsDefaultPlantFarming] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const {
     plans,
@@ -39,11 +39,6 @@ const PlantDetail = () => {
     isSuccessDefaultPlant
   } = usePlantDetail({ plantId, seedId: selectedSeed?.id, isDefaultPlantFarming })
 
-  const [selectedDefaultSeed, setSelectedDefaultSeed] = useState(
-    plans?.find((item) => item.isSeedDefault)?.seedId || ''
-  )
-  const [isUpdateDefaultSeed, setIsUpdateDefaultSeed] = useState(false)
-
   const [api, contextHolder] = notification.useNotification()
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -55,11 +50,13 @@ const PlantDetail = () => {
 
   const onCreate = async (values) => {
     try {
+      setLoading(true)
       const resSeed = await SEED.addSeedByRecommendSeedId({
         recommendSeedId: selectedSeed.id
       })
 
       if (resSeed.response && resSeed.response?.data?.message === 'Seed already exists') {
+        setLoading(false)
         openNotificationWithIcon('error', 'Thông báo', 'Hạt giống đã tồn tại')
         setIsDefaultPlantFarming(false)
         setOpenSeed(false)
@@ -67,6 +64,7 @@ const PlantDetail = () => {
         return
       }
       if (resSeed.status !== 200) {
+        setLoading(false)
         openNotificationWithIcon('error', 'Thông báo', 'Thêm Seed thất bại')
         setIsDefaultPlantFarming(false)
         setOpenSeed(false)
@@ -82,16 +80,20 @@ const PlantDetail = () => {
         }
       })
       if (res.status === 200) {
+        setLoading(false)
         refetchPlans()
         openNotificationWithIcon('success', 'Thông báo', 'Thêm thành công')
       } else {
+        setLoading(false)
         refetchPlans()
         openNotificationWithIcon('error', 'Thông báo', 'Thêm plant farming thất bại')
       }
       setIsDefaultPlantFarming(false)
       setOpenSeed(false)
       setOpenPlantFarming(false)
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       console.error(error)
       openNotificationWithIcon('error', 'Thông báo', 'Thêm plant farming thất bại')
       setIsDefaultPlantFarming(false)
@@ -121,18 +123,22 @@ const PlantDetail = () => {
 
   const handleUpdatePlantFarming = async (values) => {
     try {
+      setLoading(true)
       const res = await PLANT_FARMING.updatePlantFarming({
         plantFarmingId: selectedPlantFarmming._id,
         data: values
       })
       if (res.status === 200) {
+        setLoading(false)
         refetchPlans()
         openNotificationWithIcon('success', 'Thông báo', 'Cập nhật thành công')
       } else {
+        setLoading(false)
         openNotificationWithIcon('error', 'Thông báo', 'Cập nhật thất bại')
       }
       setOpenUpdatePlantFarming(false)
     } catch (error) {
+      setLoading(false)
       console.error(error)
       openNotificationWithIcon('error', 'Thông báo', 'Cập nhật thất bại')
     }
@@ -140,19 +146,25 @@ const PlantDetail = () => {
 
   const handleDeleteConfirm = async (item) => {
     try {
+      setLoading(true)
       const res = await PLANT_FARMING.deletePlantFarming(item._id)
       if (res.status === 200) {
         const resSeed = await SEED.deleteSeed(item.seedId)
         if (resSeed.status === 200) {
+          setLoading(false)
           refetchPlans()
           openNotificationWithIcon('success', 'Thông báo', 'Xóa thành công')
         } else {
+          setLoading(false)
           openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
         }
       } else {
+        setLoading(false)
         openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
       }
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       console.error(error)
       openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
     }
@@ -161,38 +173,26 @@ const PlantDetail = () => {
   const handleUpdateDefaultSeed = async (seedId) => {
     console.log('seedId:', seedId)
     try {
+      setLoading(true)
       const res = await SEED.updateSeedDefault(seedId)
       if (res.status === 200) {
+        setLoading(false)
         refetchPlans()
         openNotificationWithIcon('success', 'Thông báo', 'Cập nhật thành công')
       } else {
+        setLoading(false)
         openNotificationWithIcon('error', 'Thông báo', 'Cập nhật thất bại')
       }
     } catch (error) {
+      setLoading(false)
       console.error(error)
       openNotificationWithIcon('error', 'Thông báo', 'Cập nhật thất bại')
     }
   }
 
-  const handleChange = (value) => {
-    setSelectedDefaultSeed(value)
-  }
-
-  const handleSave = () => {
-    if (selectedDefaultSeed) {
-      handleUpdateDefaultSeed(selectedDefaultSeed)
-      setSelectedDefaultSeed('')
-    }
-    setIsUpdateDefaultSeed(false)
-  }
-
-  const handleCancel = () => {
-    setSelectedDefaultSeed('')
-    setIsUpdateDefaultSeed(false)
-  }
-
   const handleUpdateSeed = async (values) => {
     try {
+      setLoading(true)
       const res = await SEED.updateSeed({
         seedId: selectedSeed.seedId,
         data: {
@@ -202,36 +202,20 @@ const PlantDetail = () => {
         }
       })
       if (res.status === 200) {
+        setLoading(false)
         refetchPlans()
         openNotificationWithIcon('success', 'Thông báo', 'Cập nhật thành công')
       } else {
+        setLoading(false)
         openNotificationWithIcon('error', 'Thông báo', 'Cập nhật thất bại')
       }
       setOpenUpdateSeed(false)
     } catch (error) {
+      setLoading(false)
       console.error(error)
       openNotificationWithIcon('error', 'Thông báo', 'Cập nhật thất bại')
     }
   }
-
-  const timeCultivatesColumns = [
-    {
-      title: 'Tháng bắt đầu',
-      dataIndex: 'start',
-      key: 'start'
-    },
-    {
-      title: 'Tháng kết thúc',
-      dataIndex: 'end',
-      key: 'end'
-    }
-  ]
-
-  const timeCultivatesDataSource = (item) =>
-    item.timeCultivates.map((timeCultivate, index) => ({
-      ...timeCultivate,
-      key: index
-    }))
 
   const cultivationActivitiesColumns = [
     {
@@ -322,280 +306,231 @@ const PlantDetail = () => {
     }))
 
   return (
-    <div>
-      {contextHolder}
-      {isSuccessPlans && isSuccessCurrentPlant && isSuccessDefaultPlant ? (
-        <>
-          <h1>Thông tin cây trồng {currentPlant.name}</h1>
+    <Spin spinning={loading} size="large">
+      <div>
+        {contextHolder}
+        {isSuccessPlans && isSuccessCurrentPlant && isSuccessDefaultPlant ? (
           <>
-            {plans.map((item) => {
-              if (item.isSeedDefault) {
-                return (
-                  <div key={item._id} style={{ display: 'flex' }}>
-                    <p style={{ marginRight: '1rem' }}>Hạt giống mặc định là: {item.name}</p>
-                    <Tooltip title="Cập nhật hạt giống mặc định">
-                      <Button
-                        shape="circle"
-                        icon={<EditOutlined />}
-                        onClick={() => {
-                          setSelectedDefaultSeed(item.seeedId)
-                          setIsUpdateDefaultSeed(true)
-                        }}
-                      />
-                    </Tooltip>
-                  </div>
-                )
-              }
-              return null
-            })}
-            {isUpdateDefaultSeed && (
-              <div style={{ marginTop: '16px', marginBottom: '16px' }}>
-                <Select
-                  style={{ width: 200, marginRight: '8px' }}
-                  defaultValue={selectedDefaultSeed}
-                  onChange={handleChange}
-                  showSearch
-                  filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                >
-                  {plans.map((item) => (
-                    <Option key={item._id} value={item.seedId}>
-                      {item.name}
-                    </Option>
-                  ))}
-                </Select>
-                <Button type="primary" onClick={handleSave} style={{ marginRight: '0.5rem' }}>
-                  Lưu
-                </Button>
-                <Button onClick={handleCancel}>Hủy</Button>
-              </div>
-            )}
-          </>
-          <div>
-            <Button
-              type="primary"
-              onClick={() => {
-                setOpenSeed(true)
+            <h1>Thông tin cây trồng {currentPlant.name}</h1>
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setOpenSeed(true)
+                }}
+              >
+                Thêm quy trình mới
+              </Button>
+            </div>
+            <AddSeedPopup
+              selectedPlant={{
+                id: defaultPlant.id
               }}
-            >
-              Thêm quy trình mới
-            </Button>
-          </div>
-          <AddSeedPopup
-            selectedPlant={{
-              id: defaultPlant.id
-            }}
-            open={openSeed}
-            onClose={() => {
-              setOpenSeed(false)
-            }}
-            selectedSeed={selectedSeed}
-            setSelectedSeed={setSelectedSeed}
-            handleAddSeed={handleAddSeed}
-            currentPlantId={plantId}
-          />
-          <AddSeedConfirmationModal
-            visible={confirmationModalVisible}
-            onCancel={() => setConfirmationModalVisible(false)}
-            onContinueWithEmpty={handleContinueWithEmpty}
-            onContinueWithTemplate={handleContinueWithTemplate}
-          />
+              open={openSeed}
+              onClose={() => {
+                setOpenSeed(false)
+              }}
+              selectedSeed={selectedSeed}
+              setSelectedSeed={setSelectedSeed}
+              handleAddSeed={handleAddSeed}
+              currentPlantId={plantId}
+            />
+            <AddSeedConfirmationModal
+              visible={confirmationModalVisible}
+              onCancel={() => setConfirmationModalVisible(false)}
+              onContinueWithEmpty={handleContinueWithEmpty}
+              onContinueWithTemplate={handleContinueWithTemplate}
+            />
 
-          <UpdateSeedInfo
-            visible={openUpdateSeed}
-            onCreate={handleUpdateSeed}
-            onCancel={() => setOpenUpdateSeed(false)}
-            isUpdate={true}
-            seed={selectedSeed}
-          />
-          {isDefaultPlantFarming ? (
-            <>
-              {isSuccessRecommendPlantFarming && (
+            <UpdateSeedInfo
+              visible={openUpdateSeed}
+              onCreate={handleUpdateSeed}
+              onCancel={() => setOpenUpdateSeed(false)}
+              isUpdate={true}
+              seed={selectedSeed}
+            />
+            {isDefaultPlantFarming ? (
+              <>
+                {isSuccessRecommendPlantFarming && (
+                  <AddPlantFarmingPopup
+                    open={openPlantFarming}
+                    onCancel={() => {
+                      setIsDefaultPlantFarming(false)
+                      setOpenPlantFarming(false)
+                    }}
+                    onCreate={onCreate}
+                    recommendPlantFarming={recommendPlantFarming}
+                  />
+                )}
+              </>
+            ) : (
+              <>
                 <AddPlantFarmingPopup
                   open={openPlantFarming}
-                  onCancel={() => {
-                    setIsDefaultPlantFarming(false)
-                    setOpenPlantFarming(false)
-                  }}
+                  onCancel={() => setOpenPlantFarming(false)}
                   onCreate={onCreate}
-                  recommendPlantFarming={recommendPlantFarming}
+                  recommendPlantFarming={null}
+                  isUpdate={false}
                 />
-              )}
-            </>
-          ) : (
-            <>
-              <AddPlantFarmingPopup
-                open={openPlantFarming}
-                onCancel={() => setOpenPlantFarming(false)}
-                onCreate={onCreate}
-                recommendPlantFarming={null}
-                isUpdate={false}
-              />
-            </>
-          )}
-          <List
-            itemLayout="vertical"
-            size="large"
-            pagination={{
-              onChange: (page) => {
-                console.log(page)
-              },
-              pageSize: 3
-            }}
-            dataSource={plans}
-            renderItem={(item) => (
-              <List.Item
-                key={item.name}
-                actions={[
-                  <Popconfirm
-                    title={
-                      item.isSeedDefault
-                        ? 'Bạn không thể xóa hạt giống mặc định, hãy đổi hạt giống mặc định trước'
-                        : 'Xóa hạt giống kèm quy trình canh tác'
-                    }
-                    onConfirm={() => handleDeleteConfirm(item)}
-                    okText="Có"
-                    cancelText="Không"
-                    disabled={item.isSeedDefault}
-                  >
-                    <Tooltip
+              </>
+            )}
+            <List
+              itemLayout="vertical"
+              size="large"
+              pagination={{
+                onChange: (page) => {
+                  console.log(page)
+                },
+                pageSize: 3
+              }}
+              dataSource={plans}
+              renderItem={(item) => (
+                <List.Item
+                  key={item.name}
+                  actions={[
+                    <Popconfirm
                       title={
                         item.isSeedDefault
                           ? 'Bạn không thể xóa hạt giống mặc định, hãy đổi hạt giống mặc định trước'
                           : 'Xóa hạt giống kèm quy trình canh tác'
                       }
+                      onConfirm={() => handleDeleteConfirm(item)}
+                      okText="Có"
+                      cancelText="Không"
+                      disabled={item.isSeedDefault}
                     >
-                      <span>
-                        <DeleteOutlined style={{ fontSize: '18px', color: item.isSeedDefault ? 'gray' : 'red' }} />
-                      </span>
-                    </Tooltip>
-                  </Popconfirm>,
-                  <Tooltip title="Chỉnh sửa hạt giống">
-                    <EditOutlined
-                      onClick={() => {
-                        setSelectedSeed(item)
-                        setOpenUpdateSeed(true)
-                      }}
-                    />
-                  </Tooltip>
-                ]}
-                extra={<img width={272} alt="logo" src={item.image} />}
-                style={{ backgroundColor: '#f0f0f0', marginTop: '1rem', borderRadius: '15px' }}
-              >
-                <List.Item.Meta
-                  title={item.name}
-                  description={
-                    <Paragraph
-                      ellipsis={{
-                        rows: 3,
-                        expandable: true,
-                        symbol: 'đọc thêm',
-                        tooltip: true,
-                        onExpand: function (event) {
-                          console.log('onExpand', event)
-                          event.stopPropagation()
-                          event.preventDefault()
+                      <Tooltip
+                        title={
+                          item.isSeedDefault
+                            ? 'Bạn không thể xóa hạt giống mặc định, hãy đổi hạt giống mặc định trước'
+                            : 'Xóa hạt giống kèm quy trình canh tác'
                         }
-                      }}
-                    >
-                      {item.description}
-                    </Paragraph>
-                  }
-                />
-                <Collapse>
-                  <Panel header="Quy trình chi tiết">
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        setSelectedPlantFarmming(item)
-                        setOpenUpdatePlantFarming(true)
-                      }}
-                    >
-                      Chỉnh sửa
-                    </Button>
-                    <AddPlantFarmingPopup
-                      open={openUpdatePlantFarming}
-                      onCreate={handleUpdatePlantFarming}
-                      onCancel={() => {
-                        setOpenUpdatePlantFarming(false)
-                      }}
-                      isUpdate={true}
-                      recommendPlantFarming={selectedPlantFarmming}
-                    />
-                    <div>
-                      {/* time cultivates: [{ start, end }] */}
-                      <h2> Thời gian canh tác </h2>
-                      <Table
-                        columns={timeCultivatesColumns}
-                        dataSource={timeCultivatesDataSource(item)}
-                        pagination={false}
+                      >
+                        <span>
+                          <DeleteOutlined style={{ fontSize: '18px', color: item.isSeedDefault ? 'gray' : 'red' }} />
+                        </span>
+                      </Tooltip>
+                    </Popconfirm>,
+                    <Tooltip title="Chỉnh sửa hạt giống">
+                      <EditOutlined
+                        onClick={() => {
+                          setSelectedSeed(item)
+                          setOpenUpdateSeed(true)
+                        }}
                       />
-                    </div>
-                    <Divider />
-                    <div>
-                      {/* bestTimeCultivate: {start, end} */}
-                      <h2> Thời gian canh tác tốt nhất </h2>
-                      <p>Tháng bắt đầu: {item.bestTimeCultivate.start}</p>
-                      <p>Tháng kết thúc: {item.bestTimeCultivate.end}</p>
-                    </div>
+                    </Tooltip>
+                  ]}
+                  extra={<img width={150} alt="logo" src={item.image} />}
+                  style={{ backgroundColor: '#f0f0f0', marginTop: '1rem', borderRadius: '15px' }}
+                >
+                  <List.Item.Meta
+                    title={
+                      <span>
+                        {item.name}
+                        {item.isSeedDefault ? (
+                          ' (Hạt giống mặc định)'
+                        ) : (
+                          <Popconfirm
+                            title="Bạn có chắc chắn muốn đặt hạt giống này làm mặc định không?"
+                            onConfirm={() => handleUpdateDefaultSeed(item.seedId)}
+                          >
+                            <span style={{ cursor: 'pointer' }}> | Đặt làm hạt giống mặc định </span>
+                          </Popconfirm>
+                        )}
+                      </span>
+                    }
+                    description={
+                      <Paragraph
+                        ellipsis={{
+                          rows: 3,
+                          expandable: true,
+                          symbol: 'đọc thêm',
+                          tooltip: true,
+                          onExpand: function (event) {
+                            console.log('onExpand', event)
+                            event.stopPropagation()
+                            event.preventDefault()
+                          }
+                        }}
+                      >
+                        {item.description}
+                      </Paragraph>
+                    }
+                  />
+                  <Collapse>
+                    <Panel header="Quy trình chi tiết">
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          setSelectedPlantFarmming(item)
+                          setOpenUpdatePlantFarming(true)
+                        }}
+                      >
+                        Chỉnh sửa
+                      </Button>
+                      <AddPlantFarmingPopup
+                        open={openUpdatePlantFarming}
+                        onCreate={handleUpdatePlantFarming}
+                        onCancel={() => {
+                          setOpenUpdatePlantFarming(false)
+                        }}
+                        isUpdate={true}
+                        recommendPlantFarming={selectedPlantFarmming}
+                      />
 
-                    <Divider />
-                    {/* farmingTime: number */}
-                    <p>Thời gian trồng cây: {item.farmingTime || '...'} ngày</p>
-                    <Divider />
-                    {/* harvestTime: number */}
-                    <p>Thời gian thu hoạch: {item.harvestTime || '...'} ngày</p>
-                    <Divider />
-                    <div>
-                      {/* cultivationActivities: [{name, description}] */}
-                      <h2> Hoạt động với đất </h2>
-                      <Table
-                        columns={cultivationActivitiesColumns}
-                        dataSource={cultivationActivitiesDataSource(item.cultivationActivities)}
-                        pagination={false}
-                      />
-                    </div>
-                    <Divider />
-                    <div>
-                      {/*  plantingActivity: {density, description} */}
-                      <h2> Hoạt động trong gieo trồng </h2>
-                      <p>
-                        <strong>Mật độ:</strong> {item.plantingActivity?.density}
-                      </p>
-                      <p>
-                        <strong>Mô tả:</strong> {item.plantingActivity?.description}
-                      </p>
-                    </div>
-                    <Divider />
-                    <div>
-                      {/* fertilizationActivities: [{ fertilizationTime, type, description }] */}
-                      <h2> Hoạt động phân bón </h2>
-                      <Table
-                        columns={fertilizationActivitiesColumns}
-                        dataSource={fertilizationActivitiesDataSource(item.fertilizationActivities)}
-                      />
-                    </div>
-                    <Divider />
-                    <div>
-                      {/* pestAndDiseaseControlActivities: [{name, type, symptoms, description, solution: [string], note}] */}
-                      <h2> Hoạt động phòng ngừa sâu, bệnh </h2>
-                      <Table
-                        columns={pestAndDiseaseControlActivitiesColumns}
-                        dataSource={pestAndDiseaseControlActivitiesDataSource(item.pestAndDiseaseControlActivities)}
-                      />
-                    </div>
-                    <Divider />
-                  </Panel>
-                </Collapse>
-              </List.Item>
-            )}
-          />
-        </>
-      ) : (
-        <>
-          <Loading />
-        </>
-      )}
-    </div>
+                      <Divider />
+                      <div>
+                        {/* cultivationActivities: [{name, description}] */}
+                        <h2> Hoạt động với đất </h2>
+                        <Table
+                          columns={cultivationActivitiesColumns}
+                          dataSource={cultivationActivitiesDataSource(item.cultivationActivities)}
+                          pagination={false}
+                        />
+                      </div>
+                      <Divider />
+                      <div>
+                        {/*  plantingActivity: {density, description} */}
+                        <h2> Hoạt động trong gieo trồng </h2>
+                        <p>
+                          <strong>Mật độ:</strong> {item.plantingActivity?.density}
+                        </p>
+                        <p>
+                          <strong>Mô tả:</strong> {item.plantingActivity?.description}
+                        </p>
+                      </div>
+                      <Divider />
+                      <div>
+                        {/* fertilizationActivities: [{ fertilizationTime, type, description }] */}
+                        <h2> Hoạt động phân bón </h2>
+                        <Table
+                          columns={fertilizationActivitiesColumns}
+                          dataSource={fertilizationActivitiesDataSource(item.fertilizationActivities)}
+                        />
+                      </div>
+                      <Divider />
+                      <div>
+                        {/* pestAndDiseaseControlActivities: [{name, type, symptoms, description, solution: [string], note}] */}
+                        <h2> Hoạt động phòng ngừa sâu, bệnh </h2>
+                        <Table
+                          columns={pestAndDiseaseControlActivitiesColumns}
+                          dataSource={pestAndDiseaseControlActivitiesDataSource(item.pestAndDiseaseControlActivities)}
+                        />
+                      </div>
+                      <Divider />
+                    </Panel>
+                  </Collapse>
+                </List.Item>
+              )}
+            />
+          </>
+        ) : (
+          <>
+            <Loading />
+          </>
+        )}
+      </div>
+    </Spin>
   )
 }
 

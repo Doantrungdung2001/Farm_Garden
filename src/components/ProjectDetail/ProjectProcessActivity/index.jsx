@@ -58,7 +58,7 @@ const ProcessActivityPage = ({ projectId }) => {
       const res = await PROJECT.addProcess({
         data: {
           ...values
-                },
+        },
         projectId
       })
       if (res.status === 200) {
@@ -90,7 +90,8 @@ const ProcessActivityPage = ({ projectId }) => {
       const { processId, ...updateProcess } = values
       const res = await PROJECT.updateProcess({
         data: {
-          ...updateProcess        },
+          ...updateProcess
+        },
         projectId,
         processId
       })
@@ -110,11 +111,19 @@ const ProcessActivityPage = ({ projectId }) => {
 
   const handleDeleteProcess = async (processId) => {
     console.log('Delete process: ', processId)
-    const res = await PROJECT.deleteProcess({ projectId, processId })
-    if (res.status === 200) {
-      refetch()
-      openNotificationWithIcon('success', 'Thông báo', 'Xóa thành công')
-    } else {
+    setLoading(true)
+    try {
+      const res = await PROJECT.deleteProcess({ projectId, processId })
+      setLoading(false)
+      if (res.status === 200) {
+        refetch()
+        openNotificationWithIcon('success', 'Thông báo', 'Xóa thành công')
+      } else {
+        openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
+      }
+    } catch (error) {
+      setLoading(false)
+      console.log('error: ', error)
       openNotificationWithIcon('error', 'Thông báo', 'Xóa thất bại')
     }
   }
@@ -166,7 +175,6 @@ const ProcessActivityPage = ({ projectId }) => {
                 handleAddProcess={handleAddProcess}
                 handleUpdateProcess={handleUpdateProcess}
                 handleDeleteProcess={handleDeleteProcess}
-                
                 isGarden={projectInfo.isGarden}
                 loading={loading}
               />
@@ -183,7 +191,6 @@ const ProcessActivityPage = ({ projectId }) => {
                 handleAddProcess={handleAddProcess}
                 handleUpdateProcess={handleUpdateProcess}
                 handleDeleteProcess={handleDeleteProcess}
-                
                 isGarden={projectInfo.isGarden}
                 loading={loading}
               />
@@ -199,7 +206,6 @@ const ProcessActivityPage = ({ projectId }) => {
                 handleAddProcess={handleAddProcess}
                 handleUpdateProcess={handleUpdateProcess}
                 handleDeleteProcess={handleDeleteProcess}
-                
                 isGarden={projectInfo.isGarden}
                 loading={loading}
               />

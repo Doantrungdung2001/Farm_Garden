@@ -21,7 +21,7 @@ const items = [
   getItem('Quản lý yêu cầu', '3', <DesktopOutlined />, '/manage-request'),
   getItem('Quản lý bản mẫu', '4', <DesktopOutlined />, '/manage-template'),
   getItem('Quản lý cây trồng', '5', <TeamOutlined />, '/manage-plant'),
-  getItem('Thông tin khác', '6', <PieChartOutlined />, '/other-information'),
+  getItem('Quản lý camera', '6', <PieChartOutlined />, '/other-information'),
   getItem('Trang cá nhân', '7', <UserOutlined />, '/profile')
 ]
 
