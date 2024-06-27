@@ -80,9 +80,13 @@ const App = () => {
         <div className="demo-logo-vertical" />
         <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline" defaultSelectedKeys={[selectedKey]}>
           {items.map((item) => (
-            <Menu.Item key={item.key} onClick={() => setSelectedKey(item.key)}>
+            <Menu.Item
+              style={{ marginBottom: '10px', marginTop: '15px', padding: '10px' }}
+              key={item.key}
+              onClick={() => setSelectedKey(item.key)}
+            >
               {item.icon}
-              <span>{item.label}</span>
+              <span style={{ fontWeight: 'bold', fontSize: 16 }}>{item.label}</span>
               <Link to={item.link} />
             </Menu.Item>
           ))}
@@ -97,7 +101,7 @@ const App = () => {
           >
             <Popconfirm title="Bạn có chắc chắn muốn đăng xuất?" onConfirm={handleLogout} okText="Yes" cancelText="No">
               <LogoutOutlined />
-              <span>Đăng xuất</span>
+              <span style={{ fontWeight: 'bold', fontSize: 16 }}>Đăng xuất</span>
             </Popconfirm>
           </Menu.Item>
         </Menu>
