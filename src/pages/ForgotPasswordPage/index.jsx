@@ -7,6 +7,7 @@ const ForgotPasswordPage = () => {
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (values) => {
+    console.log("Gia tri cua emmal: ",values)
     try {
       setLoading(true)
       const response = await FARM.forgotPassword({ email: values.email })
