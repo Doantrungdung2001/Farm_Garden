@@ -15,7 +15,6 @@ const ResetPasswordPage = () => {
       setErrorMessage('Mật khẩu và xác nhận mật khẩu không khớp.')
       return
     }
-
     try {
       const res = await FARM.resetPassword({ resetToken, email, newPassword: password })
       if (res.status === 200) {

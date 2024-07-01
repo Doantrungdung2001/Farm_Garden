@@ -86,7 +86,7 @@ const App = () => {
               onClick={() => setSelectedKey(item.key)}
             >
               {item.icon}
-              <span style={{ fontWeight: 'bold', fontSize: 16 }}>{item.label}</span>
+              <span style={{ fontSize: 16 }}>{item.label}</span>
               <Link to={item.link} />
             </Menu.Item>
           ))}
@@ -101,7 +101,7 @@ const App = () => {
           >
             <Popconfirm title="Bạn có chắc chắn muốn đăng xuất?" onConfirm={handleLogout} okText="Yes" cancelText="No">
               <LogoutOutlined />
-              <span style={{ fontWeight: 'bold', fontSize: 16 }}>Đăng xuất</span>
+              <span style={{ fontSize: 16 }}>Đăng xuất</span>
             </Popconfirm>
           </Menu.Item>
         </Menu>
