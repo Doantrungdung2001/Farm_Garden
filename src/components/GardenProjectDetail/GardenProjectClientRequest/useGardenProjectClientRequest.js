@@ -17,7 +17,7 @@ export default function useGardenProjectClientRequest(gardenId) {
       if (item.type === 'deliveryRequest') {
         return {
           time: formatDateTime(item.time),
-          type: 'Cây sẽ giao',
+          type: 'Đơn hàng sẽ giao',
           detail:
             item.deliveryDetails
               .map((detailItem) => `${detailItem.plant.plant_name}: ${detailItem.amount}kg`)
