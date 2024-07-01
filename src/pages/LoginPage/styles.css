@@ -1,15 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-* {
+.back {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-}
-
-body {
   background-color: #c9d6ff;
-  background: linear-gradient(to right, #e2e2e2, #d1ffd1);
+  background: linear-gradient(to right, #e2e2e2, #defdde);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +43,7 @@ body {
 
 .container button {
   /* background-color: #512da8; */
-  background-color: #4fa94f;
+  background-color: #49b449;
   color: #fff;
   font-size: 12px;
   padding: 10px 45px;
@@ -164,9 +159,9 @@ body {
 }
 
 .toggle {
-  background-color: #228B22;
+  background-color: #59b659;
   height: 100%;
-  background: linear-gradient(to right, #cbf8ca, #228B22);
+  background: linear-gradient(to right, #b0d3b0, #228b22);
   color: #fff;
   position: relative;
   left: -100%;
@@ -175,6 +170,11 @@ body {
   transform: translateX(0);
   transition: all 0.6s ease-in-out;
 }
+
+.error-message {
+    color: red;
+    font-weight: bold;
+  }
 
 .container.active .toggle {
   transform: translateX(50%);

@@ -1,143 +1,98 @@
-import React from 'react'
-import { Button, Checkbox, Form, Input } from 'antd'
-import FARM from '../../services/farmService'
-import { Link, useNavigate } from 'react-router-dom'
-import token from '../../utils/token'
-import './styles.css'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import FARM from '../../services/farmService';
+import token from '../../utils/token';
+import './styles.css'; // Import CSS file for component styling
 
-const { setAccessToken, setRefreshToken } = token
+const { setAccessToken, setRefreshToken } = token;
 
 const LoginPage = () => {
-  const navigate = useNavigate()
-  const onFinish = (values) => {
-    console.log('Success:', values)
-    console.log(values.email, values.password)
-    handle_login(values.email, values.password)
-  }
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo)
-  }
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // State cho loading
+  let errorTimeoutId = null; // Biến để lưu id của timeout
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
 
   const handle_login = async (email, password) => {
+    setIsLoading(true); // Bắt đầu loading khi bắt đầu đăng nhập
     try {
-      const res = await FARM.login({
-        email: email,
-        password: password
-      })
-      console.log('res: ', res)
-      const accessToken = res?.data?.metadata?.metadata?.tokens?.accessToken
-      const refreshToken = res?.data?.metadata?.metadata?.tokens?.refreshToken
+      const res = await FARM.login({ email, password });
+      const accessToken = res?.data?.metadata?.metadata?.tokens?.accessToken;
+      const refreshToken = res?.data?.metadata?.metadata?.tokens?.refreshToken;
+
       if (accessToken) {
-        setAccessToken(accessToken)
+        setAccessToken(accessToken);
       }
       if (refreshToken) {
-        setRefreshToken(refreshToken)
+        setRefreshToken(refreshToken);
       }
-      const id = res?.data?.metadata?.metadata?.farm?._id
-      if (id) {
-        localStorage.setItem('id', id)
-      }
-      console.log('Login success')
-      navigate('/manage-planting-garden')
-    } catch (error) {
-      console.error(error?.response?.data?.message)
-    }
-  }
 
-  const formWrapperStyle = {
-    width: '100%',
-    maxWidth: '400px',
-    margin: '0 auto',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
-  }
+      const id = res?.data?.metadata?.metadata?.farm?._id;
+      if (id) {
+        localStorage.setItem('id', id);
+      }
+
+      // Navigate to success page or handle success message
+      console.log('Login success');
+      navigate('/manage-planting-garden');
+    } catch (error) {
+      // Handle login failure
+      console.error(error?.response?.data?.message);
+      setErrorMessage('Email hoặc mật khẩu sai. Vui lòng thử lại.');
+
+      // Đặt timeout để xóa thông báo sau 3 giây
+      errorTimeoutId = setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
+    } finally {
+      setIsLoading(false); // Dừng loading khi kết thúc xử lý
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handle_login(email, password);
+    console.log('Email:', email);
+    console.log('Password:', password);
+    // Reset form fields if needed
+    setEmail('');
+    setPassword('');
+  };
 
   return (
-    // <div style={formWrapperStyle}>
-    //   <Form
-    //     name="basic"
-    //     labelCol={{ span: 8 }}
-    //     wrapperCol={{ span: 16 }}
-    //     initialValues={{ remember: true }}
-    //     onFinish={onFinish}
-    //     onFinishFailed={onFinishFailed}
-    //     autoComplete="off"
-    //   >
-    //     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Login</h2>
-    //     <Form.Item label="Email" name="email" rules={[{ required: true, message: 'Please input your email!' }]}>
-    //       <Input />
-    //     </Form.Item>
-
-    //     <Form.Item
-    //       label="Password"
-    //       name="password"
-    //       rules={[{ required: true, message: 'Please input your password!' }]}
-    //     >
-    //       <Input.Password />
-    //     </Form.Item>
-
-    //     <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-    //       <Checkbox>Remember me</Checkbox>
-    //     </Form.Item>
-
-    //     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-    //       <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-    //         Log In
-    //       </Button>
-    //       <div style={{ textAlign: 'center', marginTop: '10px' }}>
-    //         <Link to="/forgot-password">Forgot Password</Link>
-    //       </div>
-    //     </Form.Item>
-    //   </Form>
-    // </div>
-
-    <div className="container">
-      <div className="form-container sign-up">
-        <form>
-          <h1>Create Account</h1>
-          <div className="social-icons">
-            <a href="#" className="icon">
-              <i className="fab fa-google-plus-g"></i>
-            </a>
-            <a href="#" className="icon">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" className="icon">
-              <i className="fab fa-github"></i>
-            </a>
-            <a href="#" className="icon">
-              <i className="fab fa-linkedin-in"></i>
-            </a>
-          </div>
-          <span>or use your email for registration</span>
-          <input type="text" placeholder="Name" />
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
-          <button>Sign Up</button>
-        </form>
-      </div>
-      <div className="form-container sign-in">
-        <form>
-          <h1>Đăng nhập</h1>
-          <div className="social-icons">
-          </div>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Mật khẩu" />
-          <a href="#">Bạn đã quên mật khẩu?</a>
-          <button>Đăng nhạp</button>
-        </form>
-      </div>
-      <div className="toggle-container">
-        <div className="toggle">
-          <div className="toggle-panel toggle-right">
-            <h1>Hello, Farmer!</h1>
-            <p>Khách hàng đang chờ, đăng nhập để tiếp tục chăm sóc vườn rau của khách hàng nào!</p>
+    <div className="back">
+      <div className="container">
+        <div className="form-container sign-in">
+          <form onSubmit={handleSubmit}>
+            <h1>Đăng nhập</h1>
+            <input type="email" placeholder="Email" value={email} onChange={handleEmailChange} />
+            <input type="password" placeholder="Mật khẩu" value={password} onChange={handlePasswordChange} />
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+            <a href="/forgot-password">Bạn đã quên mật khẩu?</a>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            </button>
+          </form>
+        </div>
+        <div className="toggle-container">
+          <div className="toggle">
+            <div className="toggle-panel toggle-right">
+              <h1>Xin chào, Nông trại!</h1>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
-export default LoginPage
+  );
+};
+
+export default LoginPage;
