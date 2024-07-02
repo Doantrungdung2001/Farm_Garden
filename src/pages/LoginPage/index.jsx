@@ -13,21 +13,34 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false) // State cho loading
   let errorTimeoutId = null // Biến để lưu id của timeout
-
+  const [status, setStatus] = useState('')
+  const [token, setToken] = useState('')
   const [loading, setLoading] = useState(false)
 
   const [activePanel, setActivePanel] = useState('sign-in')
 
   const switchToSignUp = () => {
     setActivePanel('sign-up')
+    setStatus('')
+    setToken('')
+    setEmail('')
+    setPassword('')
   }
 
   const switchToSignIn = () => {
     setActivePanel('sign-in')
+    setStatus('')
+    setToken('')
+    setEmail('')
+    setPassword('')
   }
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value)
+  }
+
+  const handleTokenChange = (e) => {
+    setToken(e.target.value)
   }
 
   const handlePasswordChange = (e) => {
@@ -77,7 +90,29 @@ const LoginPage = () => {
       const response = await FARM.forgotPassword({ email: values })
       console.log('response:', response)
       if (response.status === 200) {
+        setStatus('success')
         message.success('Vui lòng kiểm tra email của bạn để đặt lại mật khẩu.')
+      } else {
+        console.error('Error submitting forgot password form:', response.message)
+        message.error(response.message || 'Có lỗi xảy ra. Vui lòng thử lại sau.')
+      }
+    } catch (error) {
+      console.error('Error submitting forgot password form:', error.message)
+      message.error('Có lỗi xảy ra. Vui lòng thử lại sau.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResetPassword = async (token, email, password) => {
+    try {
+      setLoading(true)
+      const response = await FARM.resetPassword({ resetToken: token, email: email, newPassword: password })
+      console.log('response:', response)
+      if (response.status === 200) {
+        setStatus('')
+        message.success('Đổi mật khẩu thành công hãy thử đăng nhập')
+        switchToSignIn()
       } else {
         console.error('Error submitting forgot password form:', response.message)
         message.error(response.message || 'Có lỗi xảy ra. Vui lòng thử lại sau.')
@@ -103,20 +138,36 @@ const LoginPage = () => {
     <div className="back">
       <div className={`container ${activePanel === 'sign-up' ? 'active' : ''}`} id="container">
         <div className="form-container sign-up">
-          <form>
-            <h1>Nhập tài khoản Email</h1>
-            <input type="email" placeholder="Email" value={email} onChange={handleEmailChange} />
-            <button
-              type="button"
-              onClick={() => {
-                handleForgetPassword(email)
-                setEmail('')
-              }}
-              disabled={loading}
-            >
-              {loading ? <Spin size="small" /> : 'Xác nhận'}
-            </button>
-          </form>
+          {status === 'success' ? (
+            <form>
+              <h1>Nhập mã token đã nhận và mật khẩu mới</h1>
+              <input placeholder="Nhập token đã nhập qua mail" value={token} onChange={handleTokenChange} />
+              <input type="password" placeholder="Mật khẩu" value={password} onChange={handlePasswordChange} />
+              <button
+                type="button"
+                onClick={() => {
+                  handleResetPassword(token, email, password)
+                }}
+                disabled={loading}
+              >
+                {loading ? <Spin size="small" /> : 'Đổi mật khẩu nhận'}
+              </button>
+            </form>
+          ) : (
+            <form>
+              <h1>Nhập tài khoản Email</h1>
+              <input type="email" placeholder="Email" value={email} onChange={handleEmailChange} />
+              <button
+                type="button"
+                onClick={() => {
+                  handleForgetPassword(email)
+                }}
+                disabled={loading}
+              >
+                {loading ? <Spin size="small" /> : 'Xác nhận'}
+              </button>
+            </form>
+          )}
         </div>
         <div className={`form-container sign-in ${activePanel === 'sign-in' ? 'active' : ''}`}>
           <form onSubmit={handleSubmit}>
