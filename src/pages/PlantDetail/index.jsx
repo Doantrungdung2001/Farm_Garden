@@ -319,7 +319,7 @@ const PlantDetail = () => {
                   setOpenSeed(true)
                 }}
               >
-                Thêm quy trình mới
+                Thêm hạt giống mới
               </Button>
             </div>
             <AddSeedPopup

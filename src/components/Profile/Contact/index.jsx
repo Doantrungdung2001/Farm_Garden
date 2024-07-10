@@ -81,7 +81,7 @@ const ContactProfile = ({
                 {phoneList.map((phone, index) => (
                   <Input.Group key={index} style={{ marginBottom: '8px', display: 'flex' }}>
                     <Input
-                      placeholder="Phone number"
+                      placeholder="Sdt"
                       value={phone}
                       onChange={(e) => handlePhoneChange(index, e.target.value)}
                     />
@@ -100,7 +100,7 @@ const ContactProfile = ({
                 {emailList.map((email, index) => (
                   <Input.Group key={index} style={{ marginBottom: '8px', display: 'flex' }}>
                     <Input
-                      placeholder="Phone number"
+                      placeholder="Email"
                       value={email}
                       onChange={(e) => handleEmailChange(index, e.target.value)}
                     />
